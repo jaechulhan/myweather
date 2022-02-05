@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    txtLocation.setText("[" + arrLocation[0].getTitle() + "] latt,long=" + latitude + "," + longitude);
+                                    txtLocation.setText("[" + arrLocation[0].getTitle() + "]");
                                 }
                             });
 
@@ -222,11 +222,6 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-//                                ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this
-//                                        , android.R.layout.simple_expandable_list_item_1
-//                                        , weatherForecasts);
-//                                lvWeatherForecast.setAdapter(arrayAdapter);
-
                                 weatherListAdapter = new WeatherListAdapter(MainActivity.this, weatherForecasts);
                                 lvWeatherForecast.setAdapter(weatherListAdapter);
                                 progressBar.setVisibility(View.GONE);

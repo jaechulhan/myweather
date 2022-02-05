@@ -12,6 +12,9 @@ android {
         versionCode 1
         versionName "1.0"
 
+        // app:srcCompat="@drawable/ic_play" - vector drawables
+        vectorDrawables.useSupportLibrary = true
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -64,4 +67,6 @@ dependencies {
     // JSON Parser
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation 'com.google.code.gson:gson:2.8.9'
+
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
 }

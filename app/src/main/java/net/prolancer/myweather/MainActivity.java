@@ -29,6 +29,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
+import net.prolancer.myweather.adapter.WeatherListAdapter;
 import net.prolancer.myweather.domain.LocationVo;
 import net.prolancer.myweather.domain.WeatherVo;
 import net.prolancer.myweather.network.NetworkManager;
@@ -57,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
     private Button btnRefresh;
     private ListView lvWeatherForecast;
     private ProgressBar progressBar;
+
+    WeatherListAdapter weatherListAdapter;
+    List<WeatherVo> weatherForecasts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
                         String consolidated_weather = jsonObject.get("consolidated_weather").getAsJsonArray().toString();
                         WeatherVo[] arrWeather = new Gson().fromJson(consolidated_weather, WeatherVo[].class);
 
-                        List<WeatherVo> weatherForecasts = new ArrayList<>();
+                        weatherForecasts = new ArrayList<>();
                         for (WeatherVo weatherVo : arrWeather) {
                             weatherVo.setMin_temp_f(convertCelsiusToFahrenheit(weatherVo.getMin_temp()));
                             weatherVo.setMax_temp_f(convertCelsiusToFahrenheit(weatherVo.getMax_temp()));
@@ -218,10 +222,13 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this
-                                        , android.R.layout.simple_expandable_list_item_1
-                                        , weatherForecasts);
-                                lvWeatherForecast.setAdapter(arrayAdapter);
+//                                ArrayAdapter arrayAdapter = new ArrayAdapter(MainActivity.this
+//                                        , android.R.layout.simple_expandable_list_item_1
+//                                        , weatherForecasts);
+//                                lvWeatherForecast.setAdapter(arrayAdapter);
+
+                                weatherListAdapter = new WeatherListAdapter(MainActivity.this, weatherForecasts);
+                                lvWeatherForecast.setAdapter(weatherListAdapter);
                                 progressBar.setVisibility(View.GONE);
                             }
                         });

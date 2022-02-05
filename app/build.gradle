@@ -15,8 +15,22 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
+    signingConfigs {
         release {
+            storeFile file("app-release-key.keystore")
+            storePassword 'prolancer123!@#'
+            keyAlias 'prolancer_net'
+            keyPassword 'prolancer123!@#'
+        }
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "String", "BASE_URL", '"https://www.metaweather.com"'
+        }
+        release {
+            buildConfigField "String", "BASE_URL", '"https://www.metaweather.com"'
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -35,5 +49,19 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    // Location GPS
     implementation 'com.google.android.gms:play-services-location:19.0.1'
+
+    // Rest API & Keep Cookie
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/logging-interceptor
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
+    // https://mvnrepository.com/artifact/com.github.franmontiel/PersistentCookieJar
+    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+
+    // JSON Parser
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation 'com.google.code.gson:gson:2.8.9'
 }

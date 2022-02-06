@@ -9,13 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.prolancer.myweather.R;
+import net.prolancer.myweather.common.constants.AppConstants;
+import net.prolancer.myweather.common.utils.DateUtils;
 import net.prolancer.myweather.domain.WeatherVo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class WeatherListAdapter extends BaseAdapter {
-    public static final String DEFAULT_TEMP_STR_FORMAT = "%.2f (C) %.2f (F)";
     private Context context;
     private List<WeatherVo> dataList;
 
@@ -52,8 +53,30 @@ public class WeatherListAdapter extends BaseAdapter {
         txtMinTemp = lvView.findViewById(R.id.txtMinTemp);
         txtMaxTemp = lvView.findViewById(R.id.txtMaxTemp);
 
+        imgWeatherState.setImageResource(getResId(dataList.get(i).getWeather_state_abbr()));
+        txtDate.setText(dataList.get(i).getApplicable_date()
+                .concat(" (")
+                .concat(DateUtils.getSimpleDayString(dataList.get(i).getApplicable_date()))
+                .concat(")"));
+        txtState.setText(dataList.get(i).getWeather_state_name());
+        txtMinTemp.setText(String.format(AppConstants.DEFAULT_TEMP_STR_FORMAT
+                , dataList.get(i).getMin_temp()
+                , dataList.get(i).getMin_temp_f()));
+        txtMaxTemp.setText(String.format(AppConstants.DEFAULT_TEMP_STR_FORMAT
+                , dataList.get(i).getMax_temp()
+                , dataList.get(i).getMax_temp_f()));
+
+        return lvView;
+    }
+
+    /**
+     * Get Resource ID
+     * @param weatherStateAbbr
+     * @return
+     */
+    private int getResId(String weatherStateAbbr) {
         int resId;
-        switch (dataList.get(i).getWeather_state_abbr()) {
+        switch (weatherStateAbbr) {
             case "sn": resId = R.drawable.sn; break;
             case "sl": resId = R.drawable.sl; break;
             case "h": resId = R.drawable.h; break;
@@ -66,13 +89,6 @@ public class WeatherListAdapter extends BaseAdapter {
             default:
                 resId = R.drawable.c;
         }
-
-        imgWeatherState.setImageResource(resId);
-        txtDate.setText(dataList.get(i).getApplicable_date());
-        txtState.setText(dataList.get(i).getWeather_state_name());
-        txtMinTemp.setText(String.format(DEFAULT_TEMP_STR_FORMAT, dataList.get(i).getMin_temp(), dataList.get(i).getMin_temp_f()));
-        txtMaxTemp.setText(String.format(DEFAULT_TEMP_STR_FORMAT, dataList.get(i).getMax_temp(), dataList.get(i).getMax_temp_f()));
-
-        return lvView;
+        return resId;
     }
 }

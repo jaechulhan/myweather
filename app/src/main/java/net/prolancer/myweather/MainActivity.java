@@ -30,6 +30,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import net.prolancer.myweather.adapter.WeatherListAdapter;
+import net.prolancer.myweather.common.constants.AppConstants;
+import net.prolancer.myweather.common.utils.DateUtils;
 import net.prolancer.myweather.domain.LocationVo;
 import net.prolancer.myweather.domain.WeatherVo;
 import net.prolancer.myweather.network.NetworkManager;
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FusedLocationProviderClient fusedLocationClient;
 
-    private TextView txtLocation;
+    private TextView txtLocation, txtCurTemp;
     private Button btnRefresh;
     private ListView lvWeatherForecast;
     private ProgressBar progressBar;
@@ -68,19 +70,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         txtLocation = findViewById(R.id.txtLocation);
+        txtCurTemp = findViewById(R.id.txtCurTemp);
         btnRefresh = findViewById(R.id.btnRefresh);
         lvWeatherForecast = findViewById(R.id.lvWeatherForecast);
         progressBar = findViewById(R.id.progressBar);
 
+        updateRefreshButtonText();
         createLocationRequest();
         updateGPS();
 
         btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                updateRefreshButtonText();
                 updateGPS();
             }
         });
+    }
+
+    /**
+     * Update Refresh Button Text
+     */
+    private void updateRefreshButtonText() {
+        btnRefresh.setText(DateUtils.getCurrentDateString());
     }
 
     @Override
@@ -166,13 +178,7 @@ public class MainActivity extends AppCompatActivity {
                         String result = response.body().string();
                         LocationVo[] arrLocation = new Gson().fromJson(result, LocationVo[].class);
                         if (arrLocation != null && arrLocation.length > 0) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    txtLocation.setText("[" + arrLocation[0].getTitle() + "]");
-                                }
-                            });
-
+                            updateCityName(arrLocation[0].getTitle());
                             int cityID = arrLocation[0].getWoeid();
                             getWeatherForecast(cityID);
                         }
@@ -180,6 +186,19 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     Log.e(TAG, e.getMessage());
                 }
+            }
+        });
+    }
+
+    /**
+     *  Update City Name
+     * @param cityName
+     */
+    private void updateCityName(String cityName) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                txtLocation.setText("[" + cityName + "]");
             }
         });
     }
@@ -212,25 +231,49 @@ public class MainActivity extends AppCompatActivity {
                         WeatherVo[] arrWeather = new Gson().fromJson(consolidated_weather, WeatherVo[].class);
 
                         weatherForecasts = new ArrayList<>();
+                        int i = 0;
                         for (WeatherVo weatherVo : arrWeather) {
                             weatherVo.setMin_temp_f(convertCelsiusToFahrenheit(weatherVo.getMin_temp()));
                             weatherVo.setMax_temp_f(convertCelsiusToFahrenheit(weatherVo.getMax_temp()));
                             weatherVo.setThe_temp_f(convertCelsiusToFahrenheit(weatherVo.getThe_temp()));
                             weatherForecasts.add(weatherVo);
+                            if (i == 0) {
+                                updateCurTemp(weatherVo);
+                            }
+                            i++;
                         }
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                weatherListAdapter = new WeatherListAdapter(MainActivity.this, weatherForecasts);
-                                lvWeatherForecast.setAdapter(weatherListAdapter);
-                                progressBar.setVisibility(View.GONE);
-                            }
-                        });
+                        updateWeatherForecast();
                     }
                 } catch (IOException e) {
                     Log.e(TAG, e.getMessage());
                 }
+            }
+        });
+    }
+
+    /**
+     * Update Current Temperature
+     */
+    private void updateCurTemp(WeatherVo weatherVo) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                txtCurTemp.setText(String.format(AppConstants.SIMPLE_TEMP_STR_FORMAT, weatherVo.getThe_temp(), weatherVo.getThe_temp_f()));
+            }
+        });
+    }
+
+    /**
+     * Update Weather Forecast
+     */
+    private void updateWeatherForecast() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                weatherListAdapter = new WeatherListAdapter(MainActivity.this, weatherForecasts);
+                lvWeatherForecast.setAdapter(weatherListAdapter);
+                progressBar.setVisibility(View.GONE);
             }
         });
     }

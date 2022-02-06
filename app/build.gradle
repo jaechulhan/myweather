@@ -10,7 +10,7 @@ android {
         minSdk 21
         targetSdk 32
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
 
         // app:srcCompat="@drawable/ic_play" - vector drawables
         vectorDrawables.useSupportLibrary = true
@@ -36,6 +36,13 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        applicationVariants.all { variant ->
+            variant.outputs.all {
+                def flavor = variant.name
+                def versionName = variant.versionName
+                outputFileName = "myweather-${flavor}-${versionName}.apk"
+            }
         }
     }
     compileOptions {

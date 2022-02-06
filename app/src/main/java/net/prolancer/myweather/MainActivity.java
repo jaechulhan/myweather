@@ -259,7 +259,9 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                txtCurTemp.setText(String.format(AppConstants.SIMPLE_TEMP_STR_FORMAT, weatherVo.getThe_temp(), weatherVo.getThe_temp_f()));
+                txtCurTemp.setText(String.format(AppConstants.SIMPLE_TEMP_STR_FORMAT
+                        , (int) Math.round(weatherVo.getThe_temp())
+                        , (int) Math.round(weatherVo.getThe_temp_f())));
             }
         });
     }

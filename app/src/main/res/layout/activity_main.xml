@@ -28,18 +28,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="City Name" />
 
-    <TextView
-        android:id="@+id/txtCurTemp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/poppinsbold"
-        android:textSize="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtLocation"
-        tools:text="Current" />
-
     <Button
         android:id="@+id/btnRefresh"
         android:layout_width="wrap_content"
@@ -50,12 +38,12 @@
         android:drawableRight="@drawable/ic_refresh"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtCurTemp" />
+        app:layout_constraintTop_toBottomOf="@+id/txtLocation" />
 
     <ListView
         android:id="@+id/lvWeatherForecast"
         android:layout_width="409dp"
-        android:layout_height="530dp"
+        android:layout_height="570dp"
         android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

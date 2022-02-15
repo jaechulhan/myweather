@@ -1,36 +1,30 @@
 package net.prolancer.myweather;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
 import net.prolancer.myweather.adapter.WeatherListAdapter;
-import net.prolancer.myweather.common.constants.AppConstants;
 import net.prolancer.myweather.common.utils.DateUtils;
 import net.prolancer.myweather.domain.LocationVo;
 import net.prolancer.myweather.domain.WeatherVo;
@@ -38,9 +32,7 @@ import net.prolancer.myweather.network.NetworkManager;
 import net.prolancer.myweather.network.NetworkResponseListener;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FusedLocationProviderClient fusedLocationClient;
 
-    private TextView txtLocation, txtCurTemp;
+    private TextView txtLocation;
     private Button btnRefresh;
     private ListView lvWeatherForecast;
     private ProgressBar progressBar;
@@ -70,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         txtLocation = findViewById(R.id.txtLocation);
-        txtCurTemp = findViewById(R.id.txtCurTemp);
         btnRefresh = findViewById(R.id.btnRefresh);
         lvWeatherForecast = findViewById(R.id.lvWeatherForecast);
         progressBar = findViewById(R.id.progressBar);
@@ -231,16 +222,11 @@ public class MainActivity extends AppCompatActivity {
                         WeatherVo[] arrWeather = new Gson().fromJson(consolidated_weather, WeatherVo[].class);
 
                         weatherForecasts = new ArrayList<>();
-                        int i = 0;
                         for (WeatherVo weatherVo : arrWeather) {
                             weatherVo.setMin_temp_f(convertCelsiusToFahrenheit(weatherVo.getMin_temp()));
                             weatherVo.setMax_temp_f(convertCelsiusToFahrenheit(weatherVo.getMax_temp()));
                             weatherVo.setThe_temp_f(convertCelsiusToFahrenheit(weatherVo.getThe_temp()));
                             weatherForecasts.add(weatherVo);
-                            if (i == 0) {
-                                updateCurTemp(weatherVo);
-                            }
-                            i++;
                         }
 
                         updateWeatherForecast();
@@ -248,20 +234,6 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     Log.e(TAG, e.getMessage());
                 }
-            }
-        });
-    }
-
-    /**
-     * Update Current Temperature
-     */
-    private void updateCurTemp(WeatherVo weatherVo) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                txtCurTemp.setText(String.format(AppConstants.SIMPLE_TEMP_STR_FORMAT
-                        , (int) Math.round(weatherVo.getThe_temp())
-                        , (int) Math.round(weatherVo.getThe_temp_f())));
             }
         });
     }
